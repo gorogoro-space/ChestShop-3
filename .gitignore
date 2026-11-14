@@ -6,7 +6,7 @@
 # netbeans
 /nbproject
 
-# we use maven!
+# Maven(古い手順。Gradle を使うときは不要)
 /build.xml
 
 # maven
@@ -14,6 +14,11 @@
 */target
 dependency-reduced-pom.xml
 */dependency-reduced-pom.xml
+
+# gradle
+.gradle/
+build/
+.kotlin/
 
 # vim
 .*.sw[a-p]

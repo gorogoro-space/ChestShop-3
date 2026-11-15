@@ -34,6 +34,12 @@ Project Pages
 * [PaperMC's Hangar](https://hangar.papermc.io/ChestShop/ChestShop)
 * [Original dbo Thread](http://forums.bukkit.org/threads/4150/)
 
+Additional features of this fork (gorogoro-space)
+--------------------------------
+All of them are disabled by default, so nothing changes unless you turn them on in `config.yml`.
+* `SHOW_SHOP_INFO_ON_CLICK`: show the shop information (owner, stock, item, enchantments, ...) when a shop sign is clicked, before the transaction. `SHOP_INFO_ON_CLICK_COOLDOWN` sets how many seconds to wait before it is shown again for the same sign.
+* `LOG_TRANSACTIONS_TO_DB`: save every transaction to `transactions.db` (the existing databases are not touched). Players see their own transactions with `/cshistory [page]` (permission `ChestShop.history`, default: everyone). `/cshistory <player> [page]` needs `ChestShop.admin.history` (default: op). `TRANSACTION_HISTORY_KEEP_DAYS` (default 90, 0 = never) deletes old entries when the server starts.
+
 Building
 --------------------------------
 

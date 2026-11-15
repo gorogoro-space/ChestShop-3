@@ -63,8 +63,8 @@
 - 設定は起動時に一度だけ解析して保持する
 
 ### データの保存
-- DB は SQLite(ORMLite)。`accounts`(名前・UUID・メッセージの ON/OFF)と `items`(アイテムのコードの対応表)の 2 つ。表を足す・変えるときは、`Migrations` で既存のデータを壊さずに移行する
-- 取引の記録は、ログ(`ChestShop Shops`、コンソールと任意のファイル)に 1 行ずつ出るだけで、DB には保存していない
+- DB は SQLite(ORMLite)。`accounts`(名前・UUID・メッセージの ON/OFF。`users.db`)と `items`(アイテムのコードの対応表。`items.db`)の 2 つ。取引履歴(`transactions`。`transactions.db`)は、設定 `LOG_TRANSACTIONS_TO_DB` を有効にしたときだけ作る別ファイル。表を足す・変えるときは、`Migrations` で既存のデータを壊さずに移行する
+- 取引の記録は、ログ(`ChestShop Shops`、コンソールと任意のファイル)に 1 行ずつ出る。DB への保存(取引履歴)は、`LOG_TRANSACTIONS_TO_DB` を有効にしたときだけ(初期値は無効)。書き込みは非同期、古い記録は起動時に一度だけ消す(`TRANSACTION_HISTORY_KEEP_DAYS`)
 - プラグインのフォルダ以外には何も書き込まない
 
 ### 他プラグインとの関係
@@ -74,9 +74,9 @@
 ## ファイル構成(plugin/src/main/java/com/Acrobot/)
 
 - `ChestShop/ChestShop.java`: メインクラス。起動処理、コマンドとリスナーの登録、ログの設定
-- `ChestShop/Commands/`: コマンド(`/iteminfo`、`/shopinfo`、`/cstoggle`、`/csaccess`、`/csGive` など)
+- `ChestShop/Commands/`: コマンド(`/iteminfo`、`/shopinfo`、`/cstoggle`、`/csaccess`、`/cshistory`、`/csGive` など)
 - `ChestShop/Listeners/`: イベント処理。取引は `PreTransaction`(検証)→ `PostTransaction`(実行・記録)の順
-- `ChestShop/Database/`: `Account`、`Item`、`Migrations`、DAO の作成
+- `ChestShop/Database/`: `Account`、`Item`、`Migrations`、DAO の作成、取引履歴(`TransactionRecord`、`TransactionHistory`)
 - `ChestShop/UUIDs/NameManager.java`: アカウント(名前と UUID)の管理
 - `ChestShop/Configuration/`: `Properties`(config.yml)、`Messages`、`Permission`
 - `ChestShop/Signs/`: 看板の解析・判定

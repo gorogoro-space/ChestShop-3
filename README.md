@@ -39,19 +39,15 @@ Building
 
 #### Installing
 
-To build ChestShop, you'll need a Maven installation.
-* [Maven download](http://maven.apache.org/download.cgi)
-* Launch `mvn clean install` -- that's it!
-
-Alternatively, you can build with Gradle (no installation needed, the Gradle Wrapper is included; use JDK 21 to run it, the plugin itself is still built for Java 8).
-* Launch `./gradlew build` (Windows: `gradlew.bat build`)
-* The plugin jar is created at `build/libs/ChestShop.jar` (the Maven build creates `target/ChestShop.jar`)
+To build ChestShop, no installation is needed: the Gradle Wrapper is included. Use JDK 21 to run it (the plugin itself is still built for Java 8).
+* Launch `./gradlew build` (Windows: `gradlew.bat build`) -- that's it!
+* The plugin jar is created at `build/libs/ChestShop.jar`
 
 Pre-build versions can also be found on the [Jenkins server](https://ci.minebench.de/job/ChestShop-3/).
 
 #### Installing external dependencies
 
-To install new external dependencies that aren't available in a maven repo, place your .jar into the main folder and launch the `install_dependency_to_repo.sh` script - it'll guide you through the process.
+To install new external dependencies that aren't available in a maven repo, place your .jar into the main folder and launch the `install_dependency_to_repo.sh` script - it'll guide you through the process. The jar is put into the `repo/` folder, which Gradle reads.
 
 Development Links
 --------------------------------

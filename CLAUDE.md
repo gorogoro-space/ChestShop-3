@@ -28,7 +28,7 @@
 - 既存コードのコメント・ログ・識別子・メッセージは英語。既存の英語コメントは書き換えない。追加するコメントは日本語でよい。
 - パッケージ名 `com.Acrobot.ChestShop` / `com.Acrobot.Breeze` は変えない(他のプラグインが API として使っている)。
 - ライセンスは LGPL-2.1。元の著作権表示を消さない。
-- **元の更新を取り込む(`git fetch upstream` のあと merge する)ときは、ビルドの設定が二重管理であることに注意する**(下の「ビルド」を参照)。
+- **元の更新を取り込む(`git fetch upstream` のあと merge する)ときは、`pom.xml` の衝突に注意する。** このリポジトリは Maven をやめて Gradle にしたので、元が `pom.xml` を変えると「こちらは削除、あちらは変更」の衝突になる。`pom.xml` は復活させず、変更(依存の追加・更新、バージョンなど)を `*.gradle.kts` と `gradle.properties` に手で写す(下の「ビルド」を参照)。
 
 ## 環境
 
@@ -38,25 +38,19 @@
   - `plugin/`: 本体(`com.Acrobot.ChestShop`、`com.Acrobot.Breeze`)
   - `adapter/spigot/<版>`、`adapter/paper/<版>`: Minecraft の版ごとの差を吸収するアダプタ(7 つ)
   - `assemble/`: 全モジュールと取り込むライブラリを 1 つの jar にまとめる
-  - `repo/`: Maven のリポジトリにない依存(`install_dependency_to_repo.sh` で入れる)
+  - `repo/`: Maven のリポジトリにない依存(`install_dependency_to_repo.sh` で入れる。Gradle がそのまま読む)
 
 ### ビルド
 
-Gradle と Maven の**両方**でビルドできる。Maven の `pom.xml` は元のプロジェクトのものを残してある。
+ビルドは Gradle だけ。元のプロジェクトの Maven(`pom.xml`)は、このリポジトリでは使わない(削除済み)。
 
-| | Gradle(推奨) | Maven |
-|---|---|---|
-| コマンド | `gradlew.bat clean build`(Linux / Mac は `./gradlew clean build`) | `mvn clean install` |
-| 完成品 | `build/libs/ChestShop.jar` | `target/ChestShop.jar` |
-| テスト | 一緒に実行される | 一緒に実行される(`-DskipTests` で省略) |
-
+- コマンド: `gradlew.bat clean build`(Linux / Mac は `./gradlew clean build`)。テストも一緒に実行される
+- 完成品: `build/libs/ChestShop.jar`
 - 「ビルドして」と言われたら、常にクリーンビルドする
-- **二重管理になっているもの**(片方を変えたら、もう片方にも同じ変更をする)
-  - 依存ライブラリとその版: `plugin/pom.xml` と `plugin/build.gradle.kts`、アダプタの `pom.xml` と `build.gradle.kts`
-  - バージョン: 各 `pom.xml` と `gradle.properties` の `chestshopVersion`(`update_version.sh` は Maven だけを更新する)
-  - 取り込むライブラリとパッケージ名の付け替え(relocation): `assemble/pom.xml` と `assemble/build.gradle.kts`
-  - `plugin.yml` の `${bukkit.plugin.version}` は、ビルド時に `版 (compiled at 時刻)` に置き換わる(Gradle は `assemble/build.gradle.kts`)
-- 提供側プラグイン(WorldGuard など)は、Gradle では間接依存を取らない設定にしている(Maven は欠けた間接依存を警告で済ませるが、Gradle は失敗するため)。コンパイルに必要な間接依存が増えたら `plugin/build.gradle.kts` に足す
+- バージョンは `gradle.properties` の `chestshopVersion` だけにある(`update_version.sh` が書き換える)
+- 依存ライブラリとその版は `plugin/build.gradle.kts` とアダプタの `build.gradle.kts`、取り込むライブラリとパッケージ名の付け替え(relocation)は `assemble/build.gradle.kts`
+- `plugin.yml` の `${bukkit.plugin.version}` は、ビルド時に `版 (compiled at 時刻)` に置き換わる(`assemble/build.gradle.kts`)
+- 提供側プラグイン(WorldGuard など)は、間接依存を取らない設定にしている(Gradle は、欠けた間接依存で失敗するため)。コンパイルに必要な間接依存が増えたら `plugin/build.gradle.kts` に足す
 - バージョンは `3.13-SNAPSHOT` のように、開発中は `-SNAPSHOT` を付ける(`create_release_files.sh` は `-SNAPSHOT` のときは配布用の jar を作らない)
 - Claude の確認はビルドまで。テストサーバーは起動しない。実機での動作確認はユーザーが行う
 

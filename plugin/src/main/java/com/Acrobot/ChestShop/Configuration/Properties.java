@@ -353,6 +353,13 @@ public class Properties {
     public static boolean USE_STOCK_COUNTER = false;
 
     @PrecededBySpace
+    @ConfigurationComment("Show the shop information (like /shopinfo) when a player clicks a shop sign? It is shown before the transaction.")
+    public static boolean SHOW_SHOP_INFO_ON_CLICK = false;
+
+    @ConfigurationComment("How many seconds to wait before the shop information is shown again for the same shop sign (see SHOW_SHOP_INFO_ON_CLICK)")
+    public static int SHOP_INFO_ON_CLICK_COOLDOWN = 10;
+
+    @PrecededBySpace
     @ConfigurationComment("Exclude these item meta attributes from the similarity check when comparing items")
     @Parser("StringSet")
     public static Set<String> EXCLUDED_ITEM_ATTRIBUTES = new LinkedHashSet<>();

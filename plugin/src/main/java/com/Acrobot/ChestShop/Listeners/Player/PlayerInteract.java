@@ -31,6 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,6 +39,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import static com.Acrobot.Breeze.Utils.ImplementationAdapter.getState;
@@ -54,6 +58,43 @@ import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
  * @author Acrobot
  */
 public class PlayerInteract implements Listener {
+
+    /** 看板クリック時のショップ情報を最後に表示した、看板の場所と時刻(プレイヤーごとに 1 件だけ保持する) */
+    private static final Map<UUID, ShownInfo> LAST_SHOWN_INFO = new HashMap<>();
+
+    private static class ShownInfo {
+        private final org.bukkit.Location location;
+        private final long time;
+
+        private ShownInfo(org.bukkit.Location location, long time) {
+            this.location = location;
+            this.time = time;
+        }
+    }
+
+    @EventHandler
+    public static void onQuit(PlayerQuitEvent event) {
+        LAST_SHOWN_INFO.remove(event.getPlayer().getUniqueId());
+    }
+
+    /**
+     * 同じ店の看板を短時間に続けてクリックしたときは、ショップ情報を出し直さない
+     */
+    private static void showShopInfoOnClick(Player player, Sign sign) {
+        if (!Properties.SHOW_SHOP_INFO_ON_CLICK || !Permission.has(player, Permission.SHOPINFO)) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        ShownInfo last = LAST_SHOWN_INFO.get(player.getUniqueId());
+        if (last != null && last.location.equals(sign.getLocation())
+                && now - last.time < Properties.SHOP_INFO_ON_CLICK_COOLDOWN * 1000L) {
+            return;
+        }
+
+        LAST_SHOWN_INFO.put(player.getUniqueId(), new ShownInfo(sign.getLocation(), now));
+        ChestShop.callEvent(new ShopInfoEvent(player, sign));
+    }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public static void onInteract(PlayerInteractEvent event) {
@@ -168,6 +209,8 @@ public class PlayerInteract implements Listener {
             Messages.TRADE_DENIED.sendWithPrefix(player);
             return;
         }
+
+        showShopInfoOnClick(player, sign);
 
         //Bukkit.getLogger().info("ChestShop - DEBUG - "+block.getWorld().getName()+": "+block.getLocation().getBlockX()+", "+block.getLocation().getBlockY()+", "+block.getLocation().getBlockZ());
         PreTransactionEvent pEvent = preparePreTransactionEvent(sign, player, action);

@@ -23,6 +23,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
     testImplementation("org.junit.platform:junit-platform-launcher")
+    // 取引履歴のテストで、実際の SQLite を使う(Spigot が本番で持っているものと同じ版)
+    testRuntimeOnly("org.xerial:sqlite-jdbc:3.46.1.0") { isTransitive = false }
+    testRuntimeOnly("org.slf4j:slf4j-api:2.0.16")
     shade("com.j256.ormlite:ormlite-jdbc:6.1")
     shade("de.themoep.utils:lang-bukkit:1.3-SNAPSHOT")
     shade("de.themoep:minedown-adventure:1.7.6-SNAPSHOT")

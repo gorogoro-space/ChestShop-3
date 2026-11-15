@@ -29,6 +29,9 @@ commands:
   csMetrics:
     description: Shows ChestShop's metrics
     usage: /<command>
+  cshistory:
+    description: Shows your transaction history
+    usage: /<command> [page]
   cstoggle:
     description: Toggle messages to the owner of a shop
     usage: /<command>
@@ -88,6 +91,12 @@ permissions:
   ChestShop.iteminfo:
     description: Allows user to see item info with the command.
     default: true
+  ChestShop.history:
+    description: Allows user to see their own transaction history with /cshistory.
+    default: true
+  ChestShop.admin.history:
+    description: Allows user to see the transaction history of other players.
+    default: op
   ChestShop.shopinfo:
     description: Allows user to see shop info with the command or middle click on shop sign/container.
     default: true
@@ -97,6 +106,7 @@ permissions:
     children:
       ChestShop.adminshop: true
       ChestShop.name.*: true
+      ChestShop.admin.history: true
   ChestShop.adminshop:
     description: Allows user to create and destroy Admin Shops
   ChestShop.mod:

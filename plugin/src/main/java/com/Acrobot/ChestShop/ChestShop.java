@@ -2,6 +2,7 @@ package com.Acrobot.ChestShop;
 
 import com.Acrobot.Breeze.Configuration.Configuration;
 import com.Acrobot.ChestShop.Commands.Give;
+import com.Acrobot.ChestShop.Commands.History;
 import com.Acrobot.ChestShop.Commands.ItemInfo;
 import com.Acrobot.ChestShop.Commands.ShopInfo;
 import com.Acrobot.ChestShop.Commands.Toggle;
@@ -10,6 +11,7 @@ import com.Acrobot.ChestShop.Commands.AccessToggle;
 import com.Acrobot.ChestShop.Configuration.Messages;
 import com.Acrobot.ChestShop.Configuration.Properties;
 import com.Acrobot.ChestShop.Database.Migrations;
+import com.Acrobot.ChestShop.Database.TransactionHistory;
 import com.Acrobot.ChestShop.Listeners.Block.BlockPlace;
 import com.Acrobot.ChestShop.Listeners.Block.Break.ChestBreak;
 import com.Acrobot.ChestShop.Listeners.Block.Break.SignBreak;
@@ -157,10 +159,13 @@ public class ChestShop extends JavaPlugin {
         registerCommand("csGive", new Give(), Permission.ADMIN);
         registerCommand("cstoggle", new Toggle(), Permission.NOTIFY_TOGGLE);
         registerCommand("csaccess", new AccessToggle(), Permission.ACCESS_TOGGLE);
+        registerCommand("cshistory", new History(), Permission.HISTORY);
 
         loadManager();
 
         itemDatabase = new ItemDatabase();
+
+        loadTransactionHistory();
 
         if (!Dependencies.loadPlugins()) {
             getServer().getPluginManager().disablePlugin(this);
@@ -183,6 +188,33 @@ public class ChestShop extends JavaPlugin {
             command.setExecutor(executor);
             command.setPermission(permission.toString());
             commands.add(command);
+        }
+    }
+
+    /**
+     * 取引履歴(transactions.db)を準備し、古い記録を消す。LOG_TRANSACTIONS_TO_DB が有効なときだけ動く
+     */
+    private void loadTransactionHistory() {
+        if (!Properties.LOG_TRANSACTIONS_TO_DB) {
+            return;
+        }
+        try {
+            TransactionHistory.load();
+        } catch (Exception e) {
+            getBukkitLogger().log(java.util.logging.Level.WARNING, "Could not load the transaction history database! The history will not be saved:", e);
+            return;
+        }
+        if (Properties.TRANSACTION_HISTORY_KEEP_DAYS > 0) {
+            runInAsyncThread(() -> {
+                try {
+                    int deleted = TransactionHistory.deleteOlderThan(Properties.TRANSACTION_HISTORY_KEEP_DAYS);
+                    if (deleted > 0) {
+                        getBukkitLogger().info("Deleted " + deleted + " old entries of the transaction history.");
+                    }
+                } catch (Exception e) {
+                    getBukkitLogger().log(java.util.logging.Level.WARNING, "Error while deleting old transaction history entries:", e);
+                }
+            });
         }
     }
 
@@ -422,6 +454,9 @@ public class ChestShop extends JavaPlugin {
         registerEvent(new EmptyShopDeleter());
         registerEvent(new ItemManager());
         registerEvent(new TransactionLogger());
+        if (Properties.LOG_TRANSACTIONS_TO_DB) {
+            registerEvent(new TransactionHistoryLogger());
+        }
         registerEvent(new TransactionMessageSender());
     }
 

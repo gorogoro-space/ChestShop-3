@@ -261,6 +261,13 @@ public class Properties {
     @ConfigurationComment("Do you want ChestShop's transaction messages to show up in console?")
     public static boolean LOG_TO_CONSOLE = true;
 
+    @PrecededBySpace
+    @ConfigurationComment("Save the transaction history to a database so that players can see their own transactions with /cshistory? (Disabled by default; it creates transactions.db in the plugin folder)")
+    public static boolean LOG_TRANSACTIONS_TO_DB = false;
+
+    @ConfigurationComment("After how many days should old entries of the transaction history be deleted? (0 = never, only checked when the server starts)")
+    public static int TRANSACTION_HISTORY_KEEP_DAYS = 90;
+
     @ConfigurationComment("Should all shop removals be logged?")
     public static boolean LOG_ALL_SHOP_REMOVALS = true;
 

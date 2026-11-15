@@ -95,3 +95,8 @@ TOGGLE_MESSAGES_ON: "あなたのショップからのメッセージを受け�
 TOGGLE_ACCESS_ON: "アクセスできるお店で取引できなくなりました。"
 TOGGLE_ACCESS_OFF: "アクセスできるお店で取引が可能になりました。"
 ERROR_OCCURRED: "[エラーが発生しました!](red) [%error](yellow)"
+HISTORY_DISABLED: "このサーバーでは取引履歴が有効になっていません。"
+HISTORY_EMPTY: "%player の取引は見つかりません。"
+HISTORY_HEADER: "&a%player &fの取引履歴 &7(%page/%pagesページ、全%total件)"
+HISTORY_BOUGHT: "[&7%time &f%client &7が &f%owner &7から &f%item &7を &f%price &7で購入](&7ワールド: &f%world\n&7座標: &f%x/%y/%z)"
+HISTORY_SOLD: "[&7%time &f%client &7が &f%owner &7へ &f%item &7を &f%price &7で売却](&7ワールド: &f%world\n&7座標: &f%x/%y/%z)"

@@ -118,3 +118,9 @@ TOGGLE_ACCESS_ON: "You can no longer trade at shops that you have access to"
 TOGGLE_ACCESS_OFF: "You can now trade at shops that you have access to"
 
 ERROR_OCCURRED: "[An error occurred!](red) [%error](yellow)"
+
+HISTORY_DISABLED: "The transaction history is not enabled on this server."
+HISTORY_EMPTY: "No transactions found for %player."
+HISTORY_HEADER: "&aTransaction history of &f%player &7(page %page/%pages, %total in total)"
+HISTORY_BOUGHT: "[&7%time &f%client &7bought &f%item &7from &f%owner &7for &f%price](&7In world: &f%world\n&7At position: &f%x/%y/%z)"
+HISTORY_SOLD: "[&7%time &f%client &7sold &f%item &7to &f%owner &7for &f%price](&7In world: &f%world\n&7At position: &f%x/%y/%z)"

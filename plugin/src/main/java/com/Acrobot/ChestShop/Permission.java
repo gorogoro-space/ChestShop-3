@@ -43,6 +43,8 @@ public enum Permission {
     ACCESS_TOGGLE("ChestShop.accesstoggle"),
     ITEMINFO("ChestShop.iteminfo"),
     SHOPINFO("ChestShop.shopinfo"),
+    HISTORY("ChestShop.history"),
+    HISTORY_ADMIN("ChestShop.admin.history"),
 
     NOLIMIT_MIN_BUY("ChestShop.nolimit.buy.min"),
     NOLIMIT_MIN_BUY_ID("ChestShop.nolimit.buy.min."),

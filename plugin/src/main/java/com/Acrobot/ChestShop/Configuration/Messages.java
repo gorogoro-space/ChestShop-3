@@ -120,6 +120,12 @@ public class Messages {
 
     public static Message ERROR_OCCURRED;
 
+    public static Message HISTORY_DISABLED;
+    public static Message HISTORY_EMPTY;
+    public static Message HISTORY_HEADER;
+    public static Message HISTORY_BOUGHT;
+    public static Message HISTORY_SOLD;
+
     @Deprecated
     public static String prefix(String message) {
         return Configuration.getColoured(prefix.getLang(null) + message);

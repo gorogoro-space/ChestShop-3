@@ -14,6 +14,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -53,14 +55,28 @@ public class SignBreak implements Listener {
     }
 
     public static void handlePhysicsBreak(Block block) {
-        if (!BlockUtil.isSign(block)) {
+        if (!BlockUtil.isLoaded(block)) {
+            return;
+        }
+
+        // 物理更新は高頻度なので、BlockData だけで裏のブロックを調べ、空気のときだけ getState に進む
+        BlockData data = block.getBlockData();
+        BlockFace direction;
+        if (data instanceof WallSign) {
+            direction = ((WallSign) data).getFacing().getOppositeFace();
+        } else if (data instanceof org.bukkit.block.data.type.Sign) {
+            direction = BlockFace.DOWN;
+        } else {
+            return;
+        }
+
+        if (block.getRelative(direction).getType() != Material.AIR) {
             return;
         }
 
         Sign sign = (Sign) getState(block, false);
-        Block attachedBlock = BlockUtil.getAttachedBlock(sign);
 
-        if (attachedBlock.getType() == Material.AIR && ChestShopSign.isValid(sign)) {
+        if (ChestShopSign.isValid(sign)) {
             sendShopDestroyedEvent((Sign) block.getState(), block.hasMetadata(METADATA_NAME)
                     ? (Player) block.getMetadata(METADATA_NAME).get(0).value()
                     : null);
